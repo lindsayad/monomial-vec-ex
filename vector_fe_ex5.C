@@ -77,6 +77,10 @@ main(int argc, char ** argv)
   const Real epsilon = input_file("epsilon", -1);
   const Real sigma = input_file("sigma", 6);
 
+  // Read mesh size
+  const std::size_t nx = input_file("nx", 15);
+  const std::size_t ny = input_file("ny", 15);
+
   // Brief message to the user regarding the program name
   // and command line arguments.
   libMesh::out << "Running " << argv[0];
@@ -97,7 +101,7 @@ main(int argc, char ** argv)
   // 2D grid on the square [-1,1]^2.  We instruct the mesh generator
   // to build a mesh of 15x15 QUAD4 elements. Note that at the end of this
   // fuction call, the mesh will be prepared and remote elements will be deleted
-  MeshTools::Generation::build_square(mesh, 15, 15, -1., 1., -1., 1., QUAD4);
+  MeshTools::Generation::build_square(mesh, nx, ny, -1., 1., -1., 1., QUAD4);
 
   // Print information about the mesh to the screen.
   mesh.print_info();
