@@ -199,7 +199,7 @@ compute_residual(const NumericVector<Number> & X,
       // No neighbor means we must be on a boundary
       if (!elem->neighbor_ptr(side))
       {
-        for (unsigned int qp = 0; qp < qrule.n_points(); qp++)
+        for (unsigned int qp = 0; qp < qface.n_points(); qp++)
         {
           auto fn = VectorValue<Number>(exact_solution(0, face_xyz[qp](0), face_xyz[qp](1)),
                                         exact_solution(1, face_xyz[qp](0), face_xyz[qp](1)),
@@ -254,7 +254,7 @@ compute_residual(const NumericVector<Number> & X,
           }
 
           // Now add the DG contribution to the local residual
-          for (unsigned int qp = 0; qp < qrule.n_points(); qp++)
+          for (unsigned int qp = 0; qp < qface.n_points(); qp++)
           {
             // element contribution
             for (std::size_t i = 0; i < dof_indices.size(); i++)
@@ -354,7 +354,7 @@ compute_jacobian(const NumericVector<Number> &,
   const auto & dphi = fe->get_dphi();
 
   // face integration points
-  const auto face_xyz = fe_face->get_xyz();
+  const auto & face_xyz = fe_face->get_xyz();
 
   // Face shape function values
   const auto & phi_face = fe_face->get_phi();
@@ -435,11 +435,7 @@ compute_jacobian(const NumericVector<Number> &,
       // No neighbor means we must be on a boundary
       if (!elem->neighbor_ptr(side))
       {
-        for (unsigned int qp = 0; qp < qrule.n_points(); qp++)
-        {
-          auto fn = VectorValue<Number>(exact_solution(0, face_xyz[qp](0), face_xyz[qp](1)),
-                                        exact_solution(1, face_xyz[qp](0), face_xyz[qp](1)),
-                                        0);
+        for (unsigned int qp = 0; qp < qface.n_points(); qp++)
           for (std::size_t i = 0; i < dof_indices.size(); i++)
             for (std::size_t j = 0; j < dof_indices.size(); j++)
 
@@ -449,7 +445,6 @@ compute_jacobian(const NumericVector<Number> &,
                   epsilon * phi_face[j][qp] * dphi_face[i][qp] * normals[qp] * JxW_face[qp];
               Kee(i, j) += sigma / h_elem * phi_face[j][qp] * phi_face[i][qp] * JxW_face[qp];
             }
-        }
       }
       else // We must be on an interior side
       {
@@ -480,7 +475,7 @@ compute_jacobian(const NumericVector<Number> &,
           Knn.resize(dof_indices_neighbor.size(), dof_indices_neighbor.size());
 
           // Now add the DG contribution to the local jacobian
-          for (unsigned int qp = 0; qp < qrule.n_points(); qp++)
+          for (unsigned int qp = 0; qp < qface.n_points(); qp++)
           {
             // element-element contribution
             for (std::size_t i = 0; i < dof_indices.size(); i++)
